@@ -1,12 +1,14 @@
 import React, {useState} from 'react';
+
 import 'bootstrap/dist/css/bootstrap.css';
-import '@fortawesome/fontawesome-free/css/all.css';
 
 import './App.css';
-
+import '@fortawesome/fontawesome-free/css/all.css';
 import Footer from './components/footer';
-import { MyDiv1, MyDiv2, MenuWrapper} from './components/layouts';
-import { MenuItem } from './components/mymenu';
+import { MyDiv1, MyDiv2} from './components/layouts';
+import { MenuItem , MenuWrapper } from './components/mymetismenu';
+
+
 
 const content= [
     {
@@ -60,29 +62,19 @@ const content= [
     },
 ];
 
-
-
-const toggleMenu = () => {
-  console.log('toggle');
-}
 const  App = () => {
 
-  const [state, setState] = useState( false );
+const [state, setState] = useState( false );
 
-//  useEffect(() => {}, [state]);
+  let body = document.body, html = document.documentElement;
 
-let body = document.body,
-    html = document.documentElement;
-
-let h = Math.max( body.scrollHeight, body.offsetHeight,
-                       html.clientHeight, html.scrollHeight, html.offsetHeight );
-
-
+  let h = Math.max( body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight );
   return (
   <>
     <MyDiv1 state={{state, h}}>
     <MenuWrapper ><MenuItem prop= {{content, state}}/></MenuWrapper>
     </MyDiv1>
+
     <MyDiv2 state={state}>
     <button onClick={(s)=>setState(!state)} >|||</button>
 
@@ -99,8 +91,8 @@ Perhaps far exposed age effects. Now distrusts you her delivered applauded affec
 Perhaps far exposed age effects. Now distrusts you her delivered applauded affection out sincerity. As tolerably recommend shameless unf
 </MyDiv2>
 
-<button onClick={toggleMenu} > Toggle Menu</button>
- <Footer ><div> <p>Footer  2019</p></div></Footer>
+
+ <Footer ><div> <p>Hello</p></div></Footer>
 
 </>
   );
