@@ -36,12 +36,12 @@ const MenuLabel = styled.span`
 
 `;
 const MenuLabelStatic =  styled.span`
-    padding-left : ${props => { console.log(props); return (props.state ? '5px' : '25px')}};
+    padding-left : ${props => { return (props.state ? '5px' : '25px')}};
     padding-right : 10px;
     display : ${ props => ( props.state ? 'none' : 'inline-block')};
 `;
 const Ia = (s)=>{
-  return (s.prop.hasOwnProperty("content") ? ( s.prop.active ? <i class="fas fa-angle-down"></i> : <i class="fas fa-angle-left"></i>) : null);
+  return (s.prop.hasOwnProperty("content") ? ( s.prop.active ? <i className="fas fa-angle-down"></i> : <i className="fas fa-angle-left"></i>) : null);
 }
 const ArrowSpan = styled.span`
 
@@ -82,7 +82,7 @@ const ContentHook = (prop,v) => {
      }
      return {
        content,
-       toggleSubMenu : useCallback((s)=> toggleContent( toggle(s) ),v)
+       toggleSubMenu : (s)=> toggleContent( toggle(s) )
      }
  }
 
@@ -90,7 +90,7 @@ const MenuDiv = styled.div`
     background-color: #255761;
     position: absolute;
     left : 45px;
-    top : ${props=>props.top}px ;
+    top : ${props=>props.top - 10}px ;
     max-height: 500px;
     transition: max-height 0.25s ease-in;
 `;
@@ -102,6 +102,9 @@ const MenuItem = (v) =>{
 
   const toggleSubMenu2 = (id,u) => {
    let top = window.scrollY + u.target.getBoundingClientRect().top ;
+
+   console.log(top);
+
    toggleSubMenu(id);
    setTop( top );
 

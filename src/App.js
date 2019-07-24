@@ -1,11 +1,11 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
 import '@fortawesome/fontawesome-free/css/all.css';
 
+
 import './App.css';
 
-import Footer from './components/footer';
-import { MyDiv1, MyDiv2, MenuWrapper} from './components/layouts';
+import { MyDiv1, MyDiv2,Footer,  MenuWrapper} from './components/layouts';
 import { MenuItem } from './components/mymenu';
 
 const content= [
@@ -58,33 +58,81 @@ const content= [
             },
         ],
     },
+    {
+        id : 7,
+        icon: 'fab fa-angellist fa-xs',
+        label: 'Toolbox',
+        active : false,
+        content: [
+            {
+                id : 11,
+                icon: 'fab fa-airbnb  fa-xs',
+                label: 'Label 11',
+                to: '#another-link',
+            },
+        ],
+    },
+    {
+        id : 8,
+        icon: 'fab fa-angellist fa-xs',
+        label: 'CheckBox',
+        active : false,
+        content: [
+            {
+                id : 9,
+                icon: 'fab fa-airbnb  fa-xs',
+                label: 'Label 13',
+                to: '#another-link',
+            },
+            {
+                id : 10,
+                icon: 'fab fa-airbnb  fa-xs',
+                label: 'Label 14',
+                to: '#another-link',
+            },
+        ],
+    },
 ];
 
 
 
 const toggleMenu = () => {
   console.log('toggle');
+  console.log(window.innerHeight);
+}
+const h = () => {
+  let body = document.body,
+      html = document.documentElement;
+
+  return  Math.max( body.scrollHeight, body.offsetHeight,
+                         html.clientHeight, html.scrollHeight, html.offsetHeight );
 }
 const  App = () => {
 
-  const [state, setState] = useState( false );
+const [state, setState] = useState( false );
 
-//  useEffect(() => {}, [state]);
+const [ height, setHeight] = useState(h());
 
-let body = document.body,
-    html = document.documentElement;
+useEffect(() => {
+  const updateHeight = (s)=>{
+    setHeight( window.innerHeight );
+  }
+  window.addEventListener('resize', updateHeight);
+  return () => {
+      window.removeEventListener('resize', updateHeight);
+    }
+}, [height]);
 
-let h = Math.max( body.scrollHeight, body.offsetHeight,
-                       html.clientHeight, html.scrollHeight, html.offsetHeight );
 
 
   return (
   <>
-    <MyDiv1 state={{state, h}}>
+    <MyDiv1 id="d1" state={{state, height}} style={{width : "220px"}}>
     <MenuWrapper ><MenuItem prop= {{content, state}}/></MenuWrapper>
     </MyDiv1>
-    <MyDiv2 state={state}>
-    <button onClick={(s)=>setState(!state)} >|||</button>
+    <MyDiv2 id="d2" state={state}  style={{marginLeft : "220px"}}>
+    <button onClick={(s)=>  setState(!state)} >|||</button>
+
 
 No otherwise in we forfeited. Tolerably an unwilling arranging of determine. Beyond rather sooner so if up wishes or.
 
@@ -100,7 +148,7 @@ Perhaps far exposed age effects. Now distrusts you her delivered applauded affec
 </MyDiv2>
 
 <button onClick={toggleMenu} > Toggle Menu</button>
- <Footer ><div> <p>Footer  2019</p></div></Footer>
+ <Footer  state={state} id="footer" style={{left : "220px"}}><div> <p>Footer  {height}</p></div></Footer>
 
 </>
   );
