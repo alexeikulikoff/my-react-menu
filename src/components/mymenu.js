@@ -1,7 +1,7 @@
 import React, {useState, useCallback} from 'react';
 import styled, { keyframes } from 'styled-components';
 import '@fortawesome/fontawesome-free/css/all.css';
-
+import {Icon } from './layouts';
 
 const showFade = keyframes`
   from {
@@ -163,9 +163,6 @@ const MenuItem = (v) =>{
   )
 }
 
-const Icon = (s) => {
-  return (<i className={s.icon} ></i> )
-}
 const UL = styled.ul`
     margin: 0;
     padding: 0;

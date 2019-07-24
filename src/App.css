@@ -1,32 +1,6 @@
 
-.left-open{
-    width:140px;
-    float:left;
-    height:100%;
-    background-color: #dfb042;
-    transition: all 0.4s;
-}
-.left-close{
-    width:40px;
-    float:left;
-    height:100%;
-    background-color: #dfb042;
-    transition: all 0.4s;
-}
-
-.right-open{
-    margin-left:140px;
-    transition: all 0.4s;
-}
-.right-close{
-    margin-left:40px;
-    transition: all 0.4s;
-}
-.classNameLink {
-  background-color: #dfb042;
-}
-body.mini-navbar .profile-element,
-body.mini-navbar .menu-label,
-body.mini-navbar .navbar-default .nav li a span {
-  display : none;
+body{
+    font-family: "open sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 13px;
+    color: #676a6c;
 }
