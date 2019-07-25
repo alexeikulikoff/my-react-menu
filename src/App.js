@@ -1,13 +1,15 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect,useRef} from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
 import '@fortawesome/fontawesome-free/css/all.css';
 
 
 import './App.css';
 
-import {Icon, MyDiv1, MyDiv2,Footer,  MenuWrapper, PageHeader,LinkBtn} from './components/layouts';
+import {Icon, MyDiv1, MyDiv2,Footer,  MenuWrapper, PageHeader,LinkBtn, WrapperContent, Div, IBox, IBoxTitle, IBoxContent, Label,
+   H5,IBoxTools, IBoxToolLink} from './components/layouts';
 import { MenuItem } from './components/mymenu';
 import content from './data/content';
+import ContentBox from './components/ContentBox';
 
 
 const toggleMenu = () => {
@@ -27,6 +29,8 @@ const [state, setState] = useState( false );
 
 const [ height, setHeight] = useState(h());
 
+
+
 useEffect(() => {
   const updateHeight = (s)=>{
     setHeight( window.innerHeight );
@@ -37,31 +41,31 @@ useEffect(() => {
     }
 }, [height]);
 
-
-
+const click_me = ()=>{
+  console.log('click-me');
+}
+let cnt="Perhaps far exposed age effects. Now distrusts you her delivered applauded affection out sincerity. As tolerably recommend shameless unf Perhaps far exposed age effects. Now distrusts you her delivered applauded affection out sincerity. As tolerably recommend shameless unf Perhaps far exposed age effects. Now distrusts you her delivered applauded affection out sincerity. As tolerably recommend shameless unf Perhaps far exposed age effects. Now distrusts you her delivered applauded affection out sincerity. As tolerably recommend shameless unf ";
+let title = "Headings";
   return (
   <>
     <MyDiv1 id="d1" state={{state, height}} style={{width : "220px"}}>
     <MenuWrapper ><MenuItem prop= {{content, state}}/></MenuWrapper>
     </MyDiv1>
     <MyDiv2 id="d2" state={state}  style={{marginLeft : "220px"}}>
+    <PageHeader className="row"> <LinkBtn onClick={(s)=>  setState(!state)} state={state}/></PageHeader>
 
-    <PageHeader> <LinkBtn onClick={(s)=>  setState(!state)} /></PageHeader>
+  <WrapperContent>
+  <Div className="row">
+     <Div className="col-lg-4">
+      <ContentBox  title={title} content={cnt} />
+    </Div>
+    <Div className="col-lg-4">
 
 
+  </Div>
+</Div>
+</WrapperContent>
 
-
-No otherwise in we forfeited. Tolerably an unwilling arranging of determine. Beyond rather sooner so if up wishes or.
-
-Speedily say has suitable disposal add boy. On forth doubt miles of child. Exercise joy man children rejoiced. Yet uncommonly his ten who diminution astonished. Demesne new manners savings staying had. Under folly balls death own point now men. Match way these she avoid see death. She whose drift their fat off.
-Perhaps far exposed age effects. Now distrusts you her delivered applauded affection out sincerity. As tolerably recommend shameless unf
-        Speedily say has suitable disposal add boy. On forth doubt miles of child. Exercise joy man children rejoiced. Yet uncommonly his ten who diminution astonished. Demesne new manners savings staying had. Under folly balls death own point now men. Match way these she avoid see death. She whose drift their fat off.
-
-Perhaps far exposed age effects. Now distrusts you her delivered applauded affection out sincerity. As tolerably recommend shameless unf
-        ty. As tolerably recommend shameless unf
-        Speedily say has suitable disposal add boy. On forth doubt miles of child. Exercise joy man children rejoiced. Yet uncommonly his ten who diminution astonished. Demesne new manners savings staying had. Under folly balls death own point now men. Match way these she avoid see death. She whose drift their fat off.
-
-Perhaps far exposed age effects. Now distrusts you her delivered applauded affection out sincerity. As tolerably recommend shameless unf
 </MyDiv2>
 
 <button onClick={toggleMenu} > Toggle Menu</button>
