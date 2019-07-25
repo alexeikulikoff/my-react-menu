@@ -166,22 +166,19 @@ const IBoxTitle = styled.div`
 
 const anime1 = (s) => {
   anime({
-       targets: document.getElementById(s),
-       minHeight: ()=> {
-
-         if (document.getElementById(s) != null ) {
-           console.log(document.getElementById(s))
-         }
-         return '250px';
+       targets: document.getElementById(s.id),
+       height: ()=> {
+         console.log(s.params.height);
+         return s.params.height;
+        // return '300px';
        }
-
 
    });
 }
 const anime2 = (s) => {
   anime({
-       targets: document.getElementById(s),
-       minHeight: '0px',
+       targets: document.getElementById(s.id),
+       height: '0px',
 
    });
 }
@@ -194,9 +191,10 @@ const IBoxContent = styled.div`
     border-image: none;
     border-style: solid solid none;
     border-width: 1px 0;
-    min-height : ${props=> {  return ( props.state ? anime1(props.id) :  anime2(props.id) ) } };
-    display : ${props=> { console.log(props); return ( props.state ? 'inline-block' :  'none' ) } };
-    animation: ${props => props.state ? showFade : hideFade} ;
+
+    height : ${props=> {  return ( props.params.state ? anime1(props) :  anime2(props) ) } };
+    display : ${props=> {  return ( props.params.state ? 'inline-block' :  'none' ) } };
+    animation: ${props => props.params.state ? showFade : hideFade} ;
     animation-duration: 1.5s;
     animation-timing-function : ease-out;
 `;

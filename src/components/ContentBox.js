@@ -11,20 +11,26 @@ const id = uuidv4();
 
 const ContentBox = (s)=>{
 
-  const [state, setState] = useState(true);
+  const [params, setParams] = useState({"state" : true, "height": "auto"});
+  console.log(params);
+
   const rf = useRef();
   const click_me = (s)=>{
-    setState(!state)
+
+    setParams( ()=>{
+        let h = document.getElementById(id).offsetHeight + 'px';
+        return {"state": !params.state, "height": params.state ? h:  params.height }
+    });
 
   }
 
   return(
     <>
     <IBox>
-    <IBoxTitle><IBoxTools><H5>{s.title}</H5><IBoxToolLink onClick={click_me}><Icon icon={state ? 'fa fa-chevron-up' :'fa fa-chevron-down'}/> </IBoxToolLink></IBoxTools>
+    <IBoxTitle><IBoxTools><H5>{s.title}</H5><IBoxToolLink onClick={click_me}><Icon icon={params.state ? 'fa fa-chevron-up' :'fa fa-chevron-down'}/> </IBoxToolLink></IBoxTools>
     </IBoxTitle>
-    <IBoxContent state={state} id={id} ref={rf}>
-    {s.content}
+    <IBoxContent params={params} id={id} ref={rf}>
+    <p>{s.content}</p>
     </IBoxContent>
     </IBox>
     </>
