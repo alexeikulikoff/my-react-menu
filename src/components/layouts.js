@@ -166,8 +166,6 @@ const IBoxTitle = styled.div`
 
 const anime1 = (s) => {
 
-
-  console.log(s);
   anime({
          targets: document.getElementById(s.id),
          height: ()=> {
@@ -193,7 +191,7 @@ const IBoxContent = styled.div`
     border-image: none;
     border-style: solid solid none;
     border-width: 1px 0;
-
+    width : 100%;
     height : ${props=> {  return ( props.params.state ? anime1(props) :  anime2(props) ) } };
     display : ${props=> {  return ( props.params.state ? 'inline-block' :  'none' ) } };
     animation: ${props => props.params.state ? showFade : hideFade} ;
@@ -257,6 +255,11 @@ const Label = styled.span`
       }
 
 `;
+const TableWrapper = styled.div`
+    overflow-y: scroll;
+    height:400px;
+
+`;
 const H5 = styled.h5`
   display: inline-block;
   font-size: 14px;
@@ -279,4 +282,4 @@ const LinkBtn = (props)=>{
 
 
 export  {Icon, MyDiv1,  MyDiv2, Footer,MenuWrapper, PageHeader, LinkBtn, WrapperContent, Div, IBox, IBoxTitle, IBoxContent, Label,
-   H5,IBoxTools, IBoxToolLink};
+   H5,IBoxTools, IBoxToolLink, TableWrapper};

@@ -10,12 +10,8 @@ import {Icon, MyDiv1, MyDiv2,Footer,  MenuWrapper, PageHeader,LinkBtn, WrapperCo
 import { MenuItem } from './components/mymenu';
 import content from './data/content';
 import ContentBox from './components/ContentBox';
+import MyTable from './components/MyTable';
 
-
-const toggleMenu = () => {
-  console.log('toggle');
-  console.log(window.innerHeight);
-}
 const h = () => {
   let body = document.body,
       html = document.documentElement;
@@ -62,14 +58,16 @@ let title2 = "Mainboxes";
     </Div>
     <Div className="col-lg-4">
       <ContentBox  title={title2} content={cnt} />
-
   </Div>
+    <Div className="col-lg-4">
+      <  MyTable title="MyTable"/>
+    </Div>
 </Div>
 </WrapperContent>
 
 </MyDiv2>
 
-<button onClick={toggleMenu} > Toggle Menu</button>
+
  <Footer  state={state} id="footer" style={{left : "220px"}}><div> <p>Footer  {height}</p></div></Footer>
 
 </>

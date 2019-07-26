@@ -29,7 +29,6 @@ const ContentBox = (s)=>{
     <IBox>
     <IBoxTitle><IBoxTools><H5>{s.title}</H5><IBoxToolLink onClick={click_me}>
           <Icon icon={params.state ? 'fa fa-chevron-up' :'fa fa-chevron-down'}/>
-
            </IBoxToolLink>
           <IBoxToolLink onClick={click_me2}>
               <Icon icon="fas fa-cog"/>
