@@ -45,7 +45,8 @@ const click_me = ()=>{
   console.log('click-me');
 }
 let cnt="Perhaps far exposed age effects. Now distrusts you her delivered applauded affection out sincerity. As tolerably recommend shameless unf Perhaps far exposed age effects. Now distrusts you her delivered applauded affection out sincerity. As tolerably recommend shameless unf Perhaps far exposed age effects. Now distrusts you her delivered applauded affection out sincerity. As tolerably recommend shameless unf Perhaps far exposed age effects. Now distrusts you her delivered applauded ";
-let title = "Headings";
+let title1 = "Headings";
+let title2 = "Mainboxes";
   return (
   <>
     <MyDiv1 id="d1" state={{state, height}} style={{width : "220px"}}>
@@ -57,10 +58,10 @@ let title = "Headings";
   <WrapperContent>
   <Div className="row">
      <Div className="col-lg-4">
-      <ContentBox  title={title} content={cnt} />
+      <ContentBox  title={title1} content={cnt} />
     </Div>
     <Div className="col-lg-4">
-
+      <ContentBox  title={title2} content={cnt} />
 
   </Div>
 </Div>

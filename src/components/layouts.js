@@ -165,15 +165,17 @@ const IBoxTitle = styled.div`
 `;
 
 const anime1 = (s) => {
-  anime({
-       targets: document.getElementById(s.id),
-       height: ()=> {
-         console.log(s.params.height);
-         return s.params.height;
-        // return '300px';
-       }
 
-   });
+
+  console.log(s);
+  anime({
+         targets: document.getElementById(s.id),
+         height: ()=> {
+             return s.params.height;
+         }
+     });
+
+
 }
 const anime2 = (s) => {
   anime({
