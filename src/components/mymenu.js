@@ -93,6 +93,7 @@ const MenuDiv = styled.div`
     top : ${props=>props.top - 10}px ;
     max-height: 500px;
     transition: max-height 0.25s ease-in;
+    z-index : 9999;
 `;
 const MenuItem = (v) =>{
 

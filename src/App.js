@@ -56,10 +56,7 @@ let title2 = "Mainboxes";
      <Div className="col-lg-4">
       <ContentBox  title={title1} content={cnt} />
     </Div>
-    <Div className="col-lg-4">
-      <ContentBox  title={title2} content={cnt} />
-  </Div>
-    <Div className="col-lg-4">
+    <Div className="col-lg-8">
       <  MyTable title="MyTable"/>
     </Div>
 </Div>

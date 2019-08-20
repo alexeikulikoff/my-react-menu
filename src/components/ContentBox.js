@@ -21,18 +21,13 @@ const ContentBox = (s)=>{
         return {"state": !params.state, "height": params.state ? h:  params.height , "id" : params.id }
     });
   }
-  const click_me2 = (s)=>{
-    console.log('click_me2');
-  }
+
   return(
     <>
     <IBox>
     <IBoxTitle><IBoxTools><H5>{s.title}</H5><IBoxToolLink onClick={click_me}>
-          <Icon icon={params.state ? 'fa fa-chevron-up' :'fa fa-chevron-down'}/>
+          <Icon icon={params.state ?  'fa fa-chevron-up' :'fa fa-chevron-down' }/>
            </IBoxToolLink>
-          <IBoxToolLink onClick={click_me2}>
-              <Icon icon="fas fa-cog"/>
-          </IBoxToolLink>
            </IBoxTools>
     </IBoxTitle>
     <IBoxContent params={params} id={params.id}>

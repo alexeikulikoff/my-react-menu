@@ -4,20 +4,12 @@ import anime from 'animejs/lib/anime.es.js';
 import '@fortawesome/fontawesome-free/css/all.css';
 
 const showFade = keyframes`
-  from {
-    opacity : 0;
-  }
-  to{
-      opacity : 1;
-  }
+  from { opacity : 0; }
+  to{ opacity : 1; }
 `;
 const hideFade = keyframes`
-  from {
-    opacity : 1;
-  }
-  to{
-      opacity : 1;
-  }
+  from { opacity : 1; }
+  to{ opacity : 1;}
 `;
 
 const Icon = (s) => {
