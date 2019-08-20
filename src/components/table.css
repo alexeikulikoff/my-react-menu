@@ -1,0 +1,15 @@
+.bg-clicked{
+  background-color: #2b5e7c !important;
+  color : #e9f0f0;
+}
+.bg-unclicked{
+    background-color: white;
+}
+.bg-mouseover{
+  background-color: #97b1c1;
+
+}
+.bg-mouseout{
+  background-color: #eff3f6;
+
+}
