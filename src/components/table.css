@@ -13,3 +13,27 @@
   background-color: #eff3f6;
 
 }
+.table td {
+        border-right-style: solid;
+        border-right-width: 1px;
+        padding-top: 0.50rem;
+        padding-right: 0.75rem;
+        padding-bottom: 0.50rem;
+        padding-left: 0.75rem;
+        vertical-align: baseline;
+}
+.table-head {
+
+    margin-bottom: 0 !important;
+
+}
+.btn-xs {
+    padding: 1px 5px;
+    font-size: 12px;
+    line-height: 1.5;
+    border-radius: 3px;
+}
+.theader{
+    background-color: #eff3f6;
+
+}

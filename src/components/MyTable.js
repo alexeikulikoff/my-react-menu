@@ -24,12 +24,12 @@ const data = genData().map((s)=> {
 
 const columnModel = [
   {name : "id",   className: "col-sm-1", caption : "id"},
-  {name : "id",   className: "", caption : "Action", render : function(data,row){
+  {name : "id",   className: "col-sm-2", caption : "Action", render : function(data,row){
 
-    return <button className="btn btn-primary btn-xs" onClick={click_row}> Action</button>;
+    return  <button className="btn btn-primary btn-xs" onClick={click_row}> Action</button>;
   }},
-  {name : "col2", className: "", caption : "Second Name"},
-  {name : "col3", className: "", caption : "Sername"}
+  {name : "col2", className: "col-sm-3", caption : "Second Name"},
+  {name : "col3", className: "col-sm-3", caption : "Sername"}
 
 ]
 
@@ -118,26 +118,33 @@ const MyTable = (s)=>{
        </IBoxTools>
     </IBoxTitle>
     <IBoxContent params={params} id={params.id}>
-    <TableWrapper>
-    <table className="table">
+  <Div>
+    <table className="table table-head">
 
-    <thead><tr>
+    <tr className="theader">
     {columnModel.map((f)=> {
       return (f.className.length > 0) ?  <td className={f.className}>{f.caption}</td> :  <td >{f.caption}</td>;
     })}
-    </tr></thead>
+  </tr>
+<tr><td colspan="4">
+  <TableWrapper>
+  <table className="table">
+
     {TableHook.data.map((s,i)=> {
       return (
-        <tr key={i}  className={ s.mouseover ? (s.clicked ? 'bg-clicked bg-mouseover' : 'bg-unclicked bg-mouseover') : 'bg-mouseout'} /* ref={(s)=>console.log(s)} */  onClick={clickRow.bind(null,i)} onMouseOver={rowMouseOver.bind(null,i)} onMouseOut={rowMouseOut.bind(null,i)}>
+        <tr key={i}  className={ s.clicked ? 'bg-clicked' : (s.mouseover ? 'bg-mouseover' : 'bg-unclicked bg-mouseout')}   onClick={clickRow.bind(null,i)} onMouseOver={rowMouseOver.bind(null,i)} onMouseOut={rowMouseOut.bind(null,i)}>
           {columnModel.map((f)=> {
 
-             return f.render == null ? <td >{s[f.name]}</td> : <td >{f.render( s[f.name], trRef.current ) }</td>;
+             return f.render == null ? <td className={f.className}>{s[f.name]}</td> : <td className={f.className}>{f.render( s[f.name], trRef.current ) }</td>;
           })}
         </tr>
       )
     })}
     </table>
     </TableWrapper>
+  </td></tr></table>
+  </Div>
+
     </IBoxContent>
     </IBox>
     <input ref={inputEl} type="text" />
