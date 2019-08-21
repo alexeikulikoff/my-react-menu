@@ -5,7 +5,6 @@ import uuidv4 from 'uuid/v4';
 
 import './table.css';
 
-
 const genData = ()=>{
   var data=[];
   for(var i=1; i < 100; i++){
@@ -20,7 +19,6 @@ const click_row = (s) =>{
 const data = genData().map((s)=> {
   return {...s, ...{clicked : false},...{mouseover : false}};
 });
-
 
 const columnModel = [
   {name : "id",   className: "col-sm-1", caption : "id"},
@@ -70,7 +68,7 @@ const MyTable = (s)=>{
 
   const TableHook  = DataTableHook( data );
 
-  const [params, setParams] = useState({"state" : true, "height": "auto", "id" :  uuidv4()});
+  const [params, setParams] = useState({"state" : false, "height": "auto", "id" :  uuidv4()});
 
    const click_me = (s)=>{
      setParams( ()=>{
@@ -79,8 +77,6 @@ const MyTable = (s)=>{
      });
    }
 
-
-  const inputEl = useRef(null);
 
 
   const clickRow = (i,s)=>{
@@ -95,20 +91,6 @@ const MyTable = (s)=>{
  const rowMouseOut=(i,e)=>{
    TableHook.setMouseOver(i);
  }
- const toggleMenu = () => {
-   let id = 3;
-   const newObj = { ...data[id], clicked : !data[id].clicked }
-   const updatedData = [...data.slice(0, id),newObj,...data.slice(id+1)  ];
-
-   console.log( updatedData );
-
-   id = 2;
-   const clearData = updatedData.map((s)=>{
-     return {...s, clicked: false};
-   })
-    console.log( clearData );
-
- }
   return (
     <>
     <IBox>
@@ -118,37 +100,31 @@ const MyTable = (s)=>{
        </IBoxTools>
     </IBoxTitle>
     <IBoxContent params={params} id={params.id}>
-  <Div>
-    <table className="table table-head">
-
+<TableWrapper>
+    <table className="table">
+    <thead>
     <tr className="theader">
     {columnModel.map((f)=> {
       return (f.className.length > 0) ?  <td className={f.className}>{f.caption}</td> :  <td >{f.caption}</td>;
     })}
   </tr>
-<tr><td colspan="4">
-  <TableWrapper>
-  <table className="table">
+  </thead>
+  <tbody>
 
     {TableHook.data.map((s,i)=> {
       return (
         <tr key={i}  className={ s.clicked ? 'bg-clicked' : (s.mouseover ? 'bg-mouseover' : 'bg-unclicked bg-mouseout')}   onClick={clickRow.bind(null,i)} onMouseOver={rowMouseOver.bind(null,i)} onMouseOut={rowMouseOut.bind(null,i)}>
           {columnModel.map((f)=> {
-
              return f.render == null ? <td className={f.className}>{s[f.name]}</td> : <td className={f.className}>{f.render( s[f.name], trRef.current ) }</td>;
           })}
         </tr>
       )
     })}
-    </table>
-    </TableWrapper>
-  </td></tr></table>
-  </Div>
-
+    </tbody>
+  </table>
+  </TableWrapper>
     </IBoxContent>
     </IBox>
-    <input ref={inputEl} type="text" />
-    <button onClick={toggleMenu} > Toggle Menu</button>
     </>
   )
 }

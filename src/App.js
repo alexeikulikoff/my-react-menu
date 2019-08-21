@@ -11,6 +11,7 @@ import { MenuItem } from './components/mymenu';
 import content from './data/content';
 import ContentBox from './components/ContentBox';
 import MyTable from './components/MyTable';
+import MyGrid from './components/MyGrid';
 
 const h = () => {
   let body = document.body,
@@ -57,8 +58,13 @@ let title2 = "Mainboxes";
       <ContentBox  title={title1} content={cnt} />
     </Div>
     <Div className="col-lg-8">
-      <  MyTable title="MyTable"/>
+     <MyGrid  title="MyGrid"  />
     </Div>
+  </Div>
+<Div className="row">
+<Div className="col-lg-8">
+  <  MyTable title="MyTable"/>
+</Div>
 </Div>
 </WrapperContent>
 

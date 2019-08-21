@@ -1,0 +1,14 @@
+
+
+.mygrid-htable {
+    border-collapse: separate;
+    table-layout: fixed;
+    margin: 0;
+}
+table {
+    background-color: transparent;
+}
+table {
+    border-spacing: 0;
+    border-collapse: collapse;
+}
