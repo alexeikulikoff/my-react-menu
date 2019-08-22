@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useState, useRef, useEffect, useContext} from 'react';
 import styled , { keyframes } from 'styled-components';
 import {Icon, Div, IBox, IBoxTitle, IBoxContent, Label,
    H5,IBoxTools, IBoxToolLink,TableWrapper} from './layouts';
@@ -7,65 +7,65 @@ import uuidv4 from 'uuid/v4';
 import './MyGrid.css';
 
 const MyGridWrapper = styled.div`
-    color: inherit;
-    ::after, ::before {
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-     box-sizing: border-box;
-  }
+
 `;
-const MyGridView = styled.div`
-    position: relative;
-    left: 0;
-    top: 0;
-    padding: 0;
-    font-size: 11px;
-    color: #222;
+const MyGriHeader = styled.div`
+
 `;
-const MyGridTitle = styled.div`
-    border-bottom: 1px solid #ddd;
-    padding: 0;
-    position: relative;
-    border-left: 0 solid;
-    border-right: 0 solid;
-    border-top: 1px solid #ddd;
-    text-align: left;
-    font-size: 12px;
-    background: none;
-    background-image: none;
-    background-color: #f5f5f6;
-    text-transform: uppercase;
+const MyGridBody = styled.div`
+    overflow-y: scroll;
+    height:  100px;
+
 `;
-const MyGridTitleSpan = styled.span`
-    line-height: 15px;
-    color: #676a6c;
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
-    font-weight: bold;
+const MyGridFooter = styled.span`
+
 `
+const THContext = React.createContext([{}, () => {}]);
 
-const MyGridDefaultState = styled.div`
-background: #F9F9F9;
-border: 1px solid #DDDDDD;
-line-height: 15px;
-font-weight: bold;
-color: #676a6c;
-text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
-position: relative;
-margin: 0;
-padding: 0;
-overflow-x: hidden;
+const THProvider = (props) => {
+    const [state, setState] =  useState({ width: ""} )
+    return (
+      <THContext.Provider value={[state, setState]}>
+        {props.children}
+      </THContext.Provider>
+    );
+}
+const useWidth = () => {
+    const[state, setState] = useContext( THContext );
+    function setWidth(f){
+      setState((s)=> ({...state, width: f}));
+    }
 
-box-sizing: border-box;
-font-size: 11px;
+    return {
+      state,
+      setWidth,
+    }
 
-`;
+}
+const TH = ({s})=>{
 
-const MyGridBox = styled.div`
-    float: left;
-    padding-right: 20px;
-    box-sizing: border-box;
-    border: 1px solid #DDDDDD;
-`;
+  const { state } = useWidth();
+
+  return (
+    <th style={{ width : state.width }}>{s}</th>
+  )
+}
+const TD = ({t})=>{
+
+  const { state, setWidth } = useWidth();
+
+  const tdElement = useRef(0);
+
+  useEffect(() => {
+      //  console.log(tdElement.current.offsetWidth);
+        setWidth(tdElement.current.offsetWidth);
+
+   },[setWidth, state.width])
+
+  return (
+    <td ref={tdElement}>{t}</td>
+  )
+}
 const MyGrid = (s) => {
   const [params, setParams] = useState({"state" : true, "height": "auto", "id" :  uuidv4()});
 
@@ -76,8 +76,6 @@ const MyGrid = (s) => {
      });
    }
 
-
-
   return (
     <>
     <IBox>
@@ -87,25 +85,34 @@ const MyGrid = (s) => {
        </IBoxTools>
     </IBoxTitle>
     <IBoxContent params={params} id={params.id}>
-    <MyGridWrapper>
-      <MyGridTitle><MyGridTitleSpan>Grid Title</MyGridTitleSpan>
-       </MyGridTitle>
-    <MyGridDefaultState>
-     <MyGridBox>
-     <table className="mygrid-htable" sellSpasing="0" sellPadding="0" border="0">
-     <thead>
-       <tr>
-       <th style={{width: "54px"}}>InvNo</th>
-       <th style={{width: "84px"}}>Date</th>
-         <th style={{width: "84px"}}>Date</th>
-       <th>Client</th>
-       </tr>
-     </thead>
-     </table>
-     </MyGridBox>
-    </MyGridDefaultState>
 
+    <MyGridWrapper>
+    <THProvider>
+      <MyGriHeader>
+        <table border="1">
+        <theader>
+        <tr>
+              <TH s="Pizda"/><th>Date</th><th>Client</th><th>Notes</th>
+        </tr>
+        </theader>
+        </table>
+      </MyGriHeader>
+      <MyGridBody>
+      <table border="1" width="100%">
+      <tbody>
+      <tr><td ></td><td></td><td></td><td></td></tr>
+      <tr><TD t="Inventary No"></TD><td>Date</td><td>Client</td><td>Notes</td></tr>
+      <tr><td>No</td><td>Date</td><td>Client</td><td>Notes</td></tr>
+      <tr><td>No</td><td>Date</td><td>Client</td><td>Notes</td></tr>
+      <tr><td>No</td><td>Date</td><td>Client</td><td>Notes</td></tr>
+      <tr><td>No</td><td>Date</td><td>Client</td><td>Notes</td></tr>
+      <tr><td>No</td><td>Date</td><td>Client</td><td>Notes</td></tr>
+      </tbody>
+      </table> </MyGridBody>
+      <MyGridFooter></MyGridFooter>
+      </THProvider>
     </MyGridWrapper>
+
     </IBoxContent>
     </IBox>
     </>
