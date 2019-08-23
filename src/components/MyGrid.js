@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect, useContext} from 'react';
+import React, {useState, useRef, useEffect, useContext,useLayoutEffect} from 'react';
 import styled , { keyframes } from 'styled-components';
 import {Icon, Div, IBox, IBoxTitle, IBoxContent, Label,
    H5,IBoxTools, IBoxToolLink,TableWrapper} from './layouts';
@@ -23,7 +23,7 @@ const initData = ()=>{
 }
 
 let columnState =  columnModel.map((s,i)=>{
-   return { col : i, width : "" };
+   return { width : "" };
 });
 
 let data = initData();
@@ -43,11 +43,34 @@ const MyGridBody = styled.div`
 const MyGridFooter = styled.span`
 
 `
+const SW = (s, f, c)=>{
+
+  let aa = s.map((u,i)=>{
+    return  (c===i) ? {...u[i],width:f} : {...u} ;
+  });
+
+  return aa;
+}
+const click_me2=()=>{
+
+let index = 0;
+let zz = [{width: ""},{ width: ""}];
+
+zz = SW(zz,100,0);
+
+console.log( zz );
+
+zz = SW(zz,300,1)
+console.log( zz );
+
+
+};
+
 const THContext = React.createContext([  [{}], () => [{}] ]);
 
 const THProvider = (props) => {
 
-    const [state, setState] =  useState( columnState )
+    const [state, setState] =  useContext( THContext  )
 
     return (
       <THContext.Provider value={[state, setState]}>
@@ -55,16 +78,12 @@ const THProvider = (props) => {
       </THContext.Provider>
     );
 }
-const useWidth = () => {
+const Hook = () => {
 
-    const[state, setState] = useContext( THContext );
+    const[state, setState] = useState( columnState );
 
     function setWidth(f,column){
-      console.log(state);
-      let newObj = {col : column, width: f};
-      const updatedState = [...state.slice(0, column),newObj,...state.slice(column+1)  ];
-      console.log(updatedState);
-      setState( (s)=> { return updatedState } );
+        setState( (s)=>SW(s,f,column) ) ;
     }
 
     return {
@@ -73,44 +92,60 @@ const useWidth = () => {
     }
 
 }
-const TH = ({t,column})=>{
-
-  const { state } = useWidth(  );
-
-  return (
-    <th style={{ width : state[ column ].width }}>{t}</th>
-  )
-}
-const TD = ({t,column})=>{
-
-  const { state, setWidth } = useWidth(  );
-
-  const tdElement = useRef( null );
-
-  useEffect(() => {
-      //  console.log(tdElement.current.offsetWidth);
-        setWidth(tdElement.current.offsetWidth, column);
-
-   },[]);
-
-  return (
-    <td ref={tdElement}>{t}</td>
-  )
-}
-
-const click_me2=()=>{
-
-let com = 0;
-let zz = [{col:0, width: 60},{col:1, width: 620}];
-
-let aa = zz.map((s,i)=>{
-  return s.col===com ? {...s,width:"1000px"} : {...s};
-})
-console.log(aa);
-
-
-};
 const MyGrid = (s) => {
+
+  const GridTable = ( { columnModel, data } )=>{
+
+    const {state , setWidth} = Hook();
+
+    const TH = ({t,column})=>{
+     return (
+        <th style={{ width : state[ column ].width }}>{t}</th>
+      )
+    }
+    const TD = ({t,column})=>{
+
+      const tdElement = useRef( null );
+
+      useEffect(() => {
+
+          //  console.log(tdElement.current.offsetWidth);
+          setWidth(tdElement.current.offsetWidth, column);
+
+        });
+
+      return (
+        <td ref={tdElement}>{t}</td>
+      )
+    }
+
+     return(
+      <>
+       <MyGridWrapper>
+
+         <MyGriHeader>
+           <table border="1">
+             <tr>
+               <TH t="Pizda" column={0}/><TH t="Suka" column={1}/><th>Client</th><th>Notes</th>
+             </tr>
+           </table>
+         </MyGriHeader>
+         <MyGridBody>
+           <table border="1" width="100%">
+
+             <tr>
+                <TD t="hello" column={0} /><TD t="hello 11111" column={1} /><td>www22</td> <td>www</td>
+             </tr>
+           </table>
+         </MyGridBody>
+         <MyGridFooter></MyGridFooter>
+      
+       </MyGridWrapper>
+
+       <button onClick={click_me2}>TTT</button>
+       </>
+     )
+  }
 
   const [params, setParams] = useState({"state" : true, "height": "auto", "id" :  uuidv4()});
 
@@ -124,52 +159,15 @@ const MyGrid = (s) => {
   return (
     <>
     <IBox>
-      <IBoxTitle><IBoxTools><H5>{s.title}</H5><IBoxToolLink onClick={click_me}>
+      <IBoxTitle><IBoxTools><H5>{s.title}</H5>
+        <IBoxToolLink onClick={click_me}>
           <Icon icon={params.state ? 'fa fa-chevron-up' :'fa fa-chevron-down'}/>
-           </IBoxToolLink>
+        </IBoxToolLink>
        </IBoxTools>
-    </IBoxTitle>
-    <IBoxContent params={params} id={params.id}>
-
-    <MyGridWrapper>
-    <THProvider>
-      <MyGriHeader>
-        <table border="1">
-
-        <tr>
-            <TH t="Pizda" column={0}/><TH t="Suka" column={1}/><th>Client</th><th>Notes</th>
-        </tr>
-
-        </table>
-      </MyGriHeader>
-      <MyGridBody>
-      <table border="1" width="100%">
-
-      <tr>
-      <TD t="hello" column={0} /><TD t="hello 11111" column={1} /><td>www22</td> <td>www</td>
-
-
-{/*        {columnModel.map((s,i)=>{
-
-          return (
-            <TD t={data[0][s.name]} column={i} />
-          )
-        })}
-
-    */}
-      </tr>
-      <tr><td>No</td><td>Date</td><td>Client</td><td>Notes</td></tr>
-      <tr><td>No</td><td>Date</td><td>Client</td><td>Notes</td></tr>
-      <tr><td>No</td><td>Date</td><td>Client</td><td>Notes</td></tr>
-      <tr><td>No</td><td>Date</td><td>Client</td><td>Notes</td></tr>
-      <tr><td>No</td><td>Date</td><td>Client</td><td>Notes</td></tr>
-
-      </table> </MyGridBody>
-      <MyGridFooter></MyGridFooter>
-      </THProvider>
-    </MyGridWrapper>
-    <button onClick={click_me2}>TTT</button>
-    </IBoxContent>
+      </IBoxTitle>
+      <IBoxContent params={params} id={params.id}>
+        <GridTable {...{columnModel, data}}/>
+     </IBoxContent>
     </IBox>
     </>
   )
@@ -177,3 +175,14 @@ const MyGrid = (s) => {
 
 
 export default  MyGrid
+
+
+
+{/*        {columnModel.map((s,i)=>{
+
+        return (
+          <TD t={data[0][s.name]} column={i} />
+        )
+      })}
+
+  */}
