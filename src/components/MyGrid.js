@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect, useContext,useLayoutEffect} from 'react';
+import React, {useState, useRef, useEffect, useContext,useLayoutEffect,useCallback} from 'react';
 import styled , { keyframes } from 'styled-components';
 import {Icon, Div, IBox, IBoxTitle, IBoxContent, Label,
    H5,IBoxTools, IBoxToolLink,TableWrapper} from './layouts';
@@ -45,74 +45,87 @@ const MyGridFooter = styled.span`
 `
 const SW = (s, f, c)=>{
 
-  let aa = s.map((u,i)=>{
-    return  (c===i) ? {...u[i],width:f} : {...u} ;
-  });
+  return ( s.map((u,i)=>{
+      return  (c===i) ? {...u[i],width:f} : {...u} ;
+   })
+  )
 
-  return aa;
 }
-const click_me2=()=>{
+const click_me2=function(){
 
-let index = 0;
-let zz = [{width: ""},{ width: ""}];
+   let index = 0;
+   let z = [{ width: ""},{ width: ""}];
 
-zz = SW(zz,100,0);
-
-console.log( zz );
-
-zz = SW(zz,300,1)
-console.log( zz );
+   let r = z.map((u,i)=>{
+     return  (index===i) ? {...u[i],width:200} : {...u} ;
+   })
+    console.log(r);
 
 
 };
 
-const THContext = React.createContext([  [{}], () => [{}] ]);
-
-const THProvider = (props) => {
-
-    const [state, setState] =  useContext( THContext  )
-
-    return (
-      <THContext.Provider value={[state, setState]}>
-        {props.children}
-      </THContext.Provider>
-    );
-}
-const Hook = () => {
-
-    const[state, setState] = useState( columnState );
-
-    function setWidth(f,column){
-        setState( (s)=>SW(s,f,column) ) ;
-    }
-
-    return {
-      state,
-      setWidth,
-    }
-
-}
 const MyGrid = (s) => {
 
   const GridTable = ( { columnModel, data } )=>{
 
-    const {state , setWidth} = Hook();
+
+    const THContext = React.createContext([ [{}], () => [{}]]);
+
+    const THProvider = (props) => {
+        const [state, setState] =  useState( columnModel.map((s,i)=>{
+          return {width:""}
+        }));
+
+        return (
+          <THContext.Provider value={[state, setState]}>
+            {props.children}
+          </THContext.Provider>
+        );
+    }
+    const useWidth = ( column ) => {
+        const[state, setState] = useContext( THContext );
+
+        function setWidth(f){
+          setState((s)=> {
+            return s.map((u,i)=>{
+              return  (column===i) ? {...u[i],width:f} : {...u} ;
+            })
+
+         })
+       }
+        return {
+          state,
+          setWidth,
+        }
+    }
+
+    const [winstate , setWinState] = useState(window.innerWidth);
+
+    window.addEventListener('resize',(s)=> setWinState(window.innerWidth));
+
+
 
     const TH = ({t,column})=>{
+
+    const {state , setWidth} = useWidth(column);
+
+
      return (
-        <th style={{ width : state[ column ].width }}>{t}</th>
+        <th style = {{width: state[column].width }}>{t}</th>
       )
     }
+
     const TD = ({t,column})=>{
+
+      const {state , setWidth} = useWidth( column );
 
       const tdElement = useRef( null );
 
-      useEffect(() => {
+      useLayoutEffect(() => {
+          let h = tdElement.current.offsetWidth;
 
-          //  console.log(tdElement.current.offsetWidth);
-          setWidth(tdElement.current.offsetWidth, column);
-
-        });
+          setWidth(h);
+        },[  state[column].width, winstate ]);
 
       return (
         <td ref={tdElement}>{t}</td>
@@ -122,24 +135,40 @@ const MyGrid = (s) => {
      return(
       <>
        <MyGridWrapper>
-
+         <THProvider>
          <MyGriHeader>
            <table border="1">
              <tr>
-               <TH t="Pizda" column={0}/><TH t="Suka" column={1}/><th>Client</th><th>Notes</th>
+               {columnModel.map((s,i)=>{
+                 return <TH t={s.caption} column={i}/>
+               })}
+
              </tr>
            </table>
          </MyGriHeader>
          <MyGridBody>
            <table border="1" width="100%">
-
              <tr>
-                <TD t="hello" column={0} /><TD t="hello 11111" column={1} /><td>www22</td> <td>www</td>
+               {columnModel.map((s,i)=>{
+                 return (<TD t={data[0][s.name]} column={i}/>)
+               })}
              </tr>
+
+             { data.filter((e,k)=>(k>0)).map((d,i)=>{
+               return(
+                 <tr>
+                     {columnModel.map((s,j)=>{
+                      return (<td > { d[s.name]  }</td> )
+                     })}
+                 </tr>
+               )
+              })
+             }
+
            </table>
          </MyGridBody>
          <MyGridFooter></MyGridFooter>
-      
+         </THProvider>
        </MyGridWrapper>
 
        <button onClick={click_me2}>TTT</button>
