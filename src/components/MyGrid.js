@@ -22,11 +22,7 @@ const initData = ()=>{
   return data;
 }
 
-let columnState =  columnModel.map((s,i)=>{
-   return { width : "" };
-});
-
-let data = initData();
+let rowData = initData();
 
 
 const MyGridWrapper = styled.div`
@@ -37,7 +33,8 @@ const MyGriHeader = styled.div`
 `;
 const MyGridBody = styled.div`
     overflow-y: scroll;
-    height:  100px;
+    height:  400px;
+
 
 `;
 const MyGridFooter = styled.span`
@@ -66,8 +63,11 @@ const click_me2=function(){
 
 const MyGrid = (s) => {
 
-  const GridTable = ( { columnModel, data } )=>{
+  const GridTable = ( { columnModel, rowData } )=>{
 
+    const data = rowData.map((s)=> {
+      return {...s, ...{clicked : false},...{mouseover : false}};
+    });
 
     const THContext = React.createContext([ [{}], () => [{}]]);
 
@@ -103,24 +103,16 @@ const MyGrid = (s) => {
 
     window.addEventListener('resize',(s)=> setWinState(window.innerWidth));
 
-
-
     const TH = ({t,column})=>{
 
     const {state , setWidth} = useWidth(column);
-
-
      return (
         <th style = {{width: state[column].width }}>{t}</th>
       )
     }
-
-    const TD = ({t,column})=>{
-
+    const TD1 = ({t,column})=>{
       const {state , setWidth} = useWidth( column );
-
       const tdElement = useRef( null );
-
       useLayoutEffect(() => {
           let h = tdElement.current.offsetWidth;
 
@@ -130,6 +122,28 @@ const MyGrid = (s) => {
       return (
         <td ref={tdElement}>{t}</td>
       )
+    }
+
+    const TD2 = ({t}) =>{
+      const tdElement = useRef( null );
+
+      const click_td=(s)=>{
+
+        var table = tdElement.current.parentElement.parentElement;
+        for(var i=0; i < table.rows.length; i++){
+            table.rows[i].classList.remove('bg-clicked');;
+        }
+        tdElement.current.parentElement.classList.add('bg-clicked');
+        console.log(tdElement.current.parentElement);
+      }
+      return (
+          <td ref={tdElement} onClick={click_td}>{t}</td>
+      )
+    }
+    const clickRow = (i,s)=>{
+
+      console.log(i);
+
     }
 
      return(
@@ -142,30 +156,29 @@ const MyGrid = (s) => {
                {columnModel.map((s,i)=>{
                  return <TH t={s.caption} column={i}/>
                })}
-
              </tr>
            </table>
          </MyGriHeader>
          <MyGridBody>
-           <table border="1" width="100%">
+           <table id="table-1" border="1" width="100%" className="hoverTable">
              <tr>
                {columnModel.map((s,i)=>{
-                 return (<TD t={data[0][s.name]} column={i}/>)
+                 return (<TD1 t={data[0][s.name]} column={i}/>)
                })}
              </tr>
 
              { data.filter((e,k)=>(k>0)).map((d,i)=>{
                return(
-                 <tr>
-                     {columnModel.map((s,j)=>{
-                      return (<td > { d[s.name]  }</td> )
+                 <tr onClick={clickRow.bind(null,i)}>
+
+                     { columnModel.map((s,j)=>{
+                      return (<TD2 t={ d[s.name]} /> )
                      })}
                  </tr>
                )
               })
              }
-
-           </table>
+         </table>
          </MyGridBody>
          <MyGridFooter></MyGridFooter>
          </THProvider>
@@ -195,7 +208,7 @@ const MyGrid = (s) => {
        </IBoxTools>
       </IBoxTitle>
       <IBoxContent params={params} id={params.id}>
-        <GridTable {...{columnModel, data}}/>
+        <GridTable {...{columnModel, rowData}}/>
      </IBoxContent>
     </IBox>
     </>
@@ -204,14 +217,3 @@ const MyGrid = (s) => {
 
 
 export default  MyGrid
-
-
-
-{/*        {columnModel.map((s,i)=>{
-
-        return (
-          <TD t={data[0][s.name]} column={i} />
-        )
-      })}
-
-  */}

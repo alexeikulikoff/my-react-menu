@@ -14,7 +14,7 @@
 
 }
 .table td {
-      
+
         padding-top: 0.50rem;
         padding-right: 0.75rem;
         padding-bottom: 0.50rem;
@@ -35,4 +35,23 @@
 .theader{
     background-color: #eff3f6;
 
+}
+
+
+
+
+.hoverTable{
+		width:100%;
+		border-collapse:collapse;
+	}
+	.hoverTable td{
+		padding:7px; border:#333 1px solid;
+	}
+	/* Define the default color for all the table rows */
+	.hoverTable tr{
+		background:  #f8f9f9 ;
+	}
+	/* Define the hover highlight color for the table row */
+.hoverTable tr:hover {
+          background-color:  #eaecee;
 }
