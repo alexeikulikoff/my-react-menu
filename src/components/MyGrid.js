@@ -16,7 +16,7 @@ const columnModel = [
 ];
 const initData = ()=>{
   var data=[];
-  for(var i=0; i < 100; i++){
+  for(var i=0; i < 35; i++){
     data.push({id: i, col1: "Piter " + i, col2: "Jhon " + i, col3: "Cooper" + i});
   }
   return data;
@@ -40,7 +40,7 @@ const MyEditTableDiv = styled.div`
     position: absolute;
     z-index: 1;
     top :  ${props=> {  return ( props.params.top  ) } };
-    left :  ${props=> {  return ( props.params.left  ) } };
+    left : ${props=> {  return ( props.params.left  ) } };
     overflow: hidden;
     display : ${props=> {  return ( props.params.state ? 'inline-block' :  'none' ) } };
     padding 10px 10px;
@@ -73,14 +73,46 @@ const MyGrid = (s) => {
 
   const GridTable = ( { columnModel, rowData } )=>{
 
-    let index = 0;
-
 
     const data = rowData.map((s)=> {
       return {...s, ...{clicked : false},...{mouseover : false}};
     });
 
 
+    const DataTableHook = (d) => {
+
+     const [data, setData] = useState( d );
+
+     const toggleClick = (s) => {
+
+       let tmp = data.map((v,i)=>{
+         return {...v,clicked:false}
+       })
+       return tmp.map((u,i)=>{
+         return  (u.id===s) ? {...u, clicked :!u.clicked} : {...u} ;
+       })
+
+     }
+     const toggleMouse = (s) => {
+        const newObj = { ...data[s], mouseover : !data[s].mouseover }
+        const clearData = data.map((s)=>{
+          return {...s, mouseover: false};
+        })
+        const updatedData = [...clearData.slice(0, s),newObj,...clearData.slice(s+1)  ];
+        return updatedData;
+
+     }
+     return {
+        data,
+        setClicked : (s)=> setData( toggleClick(s) ),
+        setMouseOver : (s) => setData( toggleMouse(s))
+      }
+    }
+
+
+    const TableHook  = DataTableHook( data );
+
+    const [params, setParams] = useState({state : false, top: 0, left: 0, index: 0});
 
     const THContext = React.createContext([ [{}], () => [{}]]);
 
@@ -140,35 +172,40 @@ const MyGrid = (s) => {
     const TD2 = ({t}) =>{
       const tdElement = useRef( null );
       const click_td=(s)=>{
-        var table = tdElement.current.parentElement.parentElement;
-        for(var i=0; i < table.rows.length; i++){
-            table.rows[i].classList.remove('bg-clicked');;
-        }
-        tdElement.current.parentElement.classList.add('bg-clicked');
-        index = parseInt(tdElement.current.parentElement.firstChild.innerText);
+        let index = parseInt(tdElement.current.parentElement.firstChild.innerText);
+        setParams(( u )=>{return {...u, index: index}});
+        TableHook.setClicked(index);
+
+      //  var table = tdElement.current.parentElement.parentElement;
+      //  for(var i=0; i < table.rows.length; i++){
+          //  table.rows[i].classList.remove('bg-clicked');;
+      //  }
+      //  tdElement.current.parentElement.classList.add('bg-clicked');
 
       //  console.log(table.parentElement.scrollHeight);
       //  console.log(table.parentElement.scrollTop);
       }
 
       return (
-          <td ref={tdElement} onClick={click_td}>{t}</td>
+          <td ref={tdElement} >{t}</td>
       )
     }
-    const clickRow = (i,s)=>{
 
-    }
-
-    const [params, setParams] = useState({"state" : false, top: 0, left: 0});
 
      const EditForm = () =>{
 
        return (<MyEditTableDiv params={params}><table className='editForm'>
 
-       <tr><td>1111111111111</td></tr>
-                                  <tr><td>22222222222222222</td></tr>
-                                  <tr><td><button onClick={click_me4}>Close</button></td></tr>
-         </table></MyEditTableDiv>)
+       {columnModel.map((s,i)=>{
+
+         return (
+           <tr><td>{s.caption}</td><td>{data[ params.index ][s.name]}</td>
+           </tr>
+         )
+       })}
+         </table>
+         <button onClick={click_me4}>Close</button>
+       </MyEditTableDiv>)
      }
      const click_me2=()=>{
 
@@ -177,15 +214,50 @@ const MyGrid = (s) => {
        var box = div.getBoundingClientRect();
 
        setParams( ()=>{
-         return {state : true, top:box.top, left: box.left};
+         return {state : true, top:box.top, left: box.left,index: params.index};
        }) ;
      }
      const click_me4 =() =>{
        setParams( ()=>{
-         return {state : false,  top:0, left: 0};
+         return {state : false,  top:0, left: 0, index: params.index};
        }) ;
      }
+     const clickRow = (i,s)=>{
 
+        TableHook.setClicked(i);
+
+     }
+     const click_me6 = ()=>{
+       let id = 1;
+       TableHook.data[id].clicked = true;
+
+       console.log(TableHook.data);
+     }
+     const TR = ( { i , p })=>{
+
+       const trElement = useRef( null );
+
+       const click_tr=(i,e)=>{
+
+         var tr = trElement.current;
+         var table = trElement.current.parentElement;
+
+         var div = trElement.current.parentElement.parentElement;
+         var rect = trElement.current.getBoundingClientRect();
+
+         TableHook.setClicked(i);
+       }
+         useEffect(() => {
+
+            var tr = trElement.current.parentElement.childNodes[4];
+
+            tr.scrollIntoView( true );
+         });
+
+       return (
+         <tr className={TableHook.data[i].clicked ? 'bg-clicked' : 'bg-unclicked'} ref={trElement} onClick={click_tr.bind(null,i)}>{p}</tr>
+       )
+     }
      return(
       <>
        <MyGridWrapper>
@@ -203,27 +275,25 @@ const MyGrid = (s) => {
          <MyGridBody>
             <EditForm />
            <table id="table-1" border="1" width="100%" className="hoverTable">
-             <tr key={0} onClick={clickRow.bind(null,0)}>
+             <tr key={0}  className={ data[0].clicked ? 'bg-clicked' : 'bg-unclicked'} >
                {columnModel.map((s,i)=>{
                  return (<TD1 t={data[0][s.name]} column={i}/>)
                })}
              </tr>
 
-             { data.filter((e,k)=>(k>0)).map((d,i)=>{
+             { TableHook.data.filter((e,k)=>(k>0)).map((d,i)=>{
                return(
-                 <tr key={ d.id } onClick={clickRow.bind(null,d.id)}>
-
-                     { columnModel.map((s,j)=>{
+                  <TR i={d.id} p = { columnModel.map((s,j)=>{
                       return (<TD2 t={ d[s.name]} /> )
-                     })}
-                 </tr>
-               )
+                    })} />
+                )
               })
              }
          </table>
          </MyGridBody>
          <MyGridFooter>
           <button onClick={click_me2}>TTT</button>
+          <button onClick={click_me6}>TestObjChange</button>
          </MyGridFooter>
          </THProvider>
        </MyGridWrapper>
