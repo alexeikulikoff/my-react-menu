@@ -35,7 +35,15 @@ const MyGridBody = styled.div`
     overflow-y: scroll;
     height:  400px;
 
-
+`;
+const MyEditTableDiv = styled.div`
+    position: absolute;
+    z-index: 1;
+    top :  ${props=> {  return ( props.params.top  ) } };
+    left :  ${props=> {  return ( props.params.left  ) } };
+    overflow: hidden;
+    display : ${props=> {  return ( props.params.state ? 'inline-block' :  'none' ) } };
+    padding 10px 10px;
 `;
 const MyGridFooter = styled.span`
 
@@ -46,7 +54,6 @@ const SW = (s, f, c)=>{
       return  (c===i) ? {...u[i],width:f} : {...u} ;
    })
   )
-
 }
 const click_me2=function(){
 
@@ -63,11 +70,17 @@ const click_me2=function(){
 
 const MyGrid = (s) => {
 
+
   const GridTable = ( { columnModel, rowData } )=>{
+
+    let index = 0;
+
 
     const data = rowData.map((s)=> {
       return {...s, ...{clicked : false},...{mouseover : false}};
     });
+
+
 
     const THContext = React.createContext([ [{}], () => [{}]]);
 
@@ -84,7 +97,6 @@ const MyGrid = (s) => {
     }
     const useWidth = ( column ) => {
         const[state, setState] = useContext( THContext );
-
         function setWidth(f){
           setState((s)=> {
             return s.map((u,i)=>{
@@ -98,57 +110,86 @@ const MyGrid = (s) => {
           setWidth,
         }
     }
-
     const [winstate , setWinState] = useState(window.innerWidth);
-
     window.addEventListener('resize',(s)=> setWinState(window.innerWidth));
-
     const TH = ({t,column})=>{
-
-    const {state , setWidth} = useWidth(column);
-     return (
-        <th style = {{width: state[column].width }}>{t}</th>
-      )
+      const {state , setWidth} = useWidth(column);
+        return (
+          <th style = {{width: state[column].width }}>{t}</th>
+        )
     }
     const TD1 = ({t,column})=>{
       const {state , setWidth} = useWidth( column );
       const tdElement = useRef( null );
-      useLayoutEffect(() => {
-          let h = tdElement.current.offsetWidth;
-
-          setWidth(h);
-        },[  state[column].width, winstate ]);
-
-      return (
-        <td ref={tdElement}>{t}</td>
-      )
-    }
-
-    const TD2 = ({t}) =>{
-      const tdElement = useRef( null );
-
       const click_td=(s)=>{
-
         var table = tdElement.current.parentElement.parentElement;
         for(var i=0; i < table.rows.length; i++){
             table.rows[i].classList.remove('bg-clicked');;
         }
         tdElement.current.parentElement.classList.add('bg-clicked');
-        console.log(tdElement.current.parentElement);
       }
+      useLayoutEffect(() => {
+          let h = tdElement.current.offsetWidth;
+          setWidth(h);
+        },[  state[column].width, winstate ]);
+      return (
+        <td ref={tdElement} onClick={click_td}>{t}</td>
+      )
+    }
+
+    const TD2 = ({t}) =>{
+      const tdElement = useRef( null );
+      const click_td=(s)=>{
+        var table = tdElement.current.parentElement.parentElement;
+        for(var i=0; i < table.rows.length; i++){
+            table.rows[i].classList.remove('bg-clicked');;
+        }
+        tdElement.current.parentElement.classList.add('bg-clicked');
+        index = parseInt(tdElement.current.parentElement.firstChild.innerText);
+
+      //  console.log(table.parentElement.scrollHeight);
+      //  console.log(table.parentElement.scrollTop);
+      }
+
       return (
           <td ref={tdElement} onClick={click_td}>{t}</td>
       )
     }
     const clickRow = (i,s)=>{
 
-      console.log(i);
-
     }
+
+    const [params, setParams] = useState({"state" : false, top: 0, left: 0});
+
+     const EditForm = () =>{
+
+       return (<MyEditTableDiv params={params}><table className='editForm'>
+
+       <tr><td>1111111111111</td></tr>
+                                  <tr><td>22222222222222222</td></tr>
+                                  <tr><td><button onClick={click_me4}>Close</button></td></tr>
+         </table></MyEditTableDiv>)
+     }
+     const click_me2=()=>{
+
+       var table = document.getElementById("table-1");
+       var div = table.parentElement
+       var box = div.getBoundingClientRect();
+
+       setParams( ()=>{
+         return {state : true, top:box.top, left: box.left};
+       }) ;
+     }
+     const click_me4 =() =>{
+       setParams( ()=>{
+         return {state : false,  top:0, left: 0};
+       }) ;
+     }
 
      return(
       <>
        <MyGridWrapper>
+
          <THProvider>
          <MyGriHeader>
            <table border="1">
@@ -160,8 +201,9 @@ const MyGrid = (s) => {
            </table>
          </MyGriHeader>
          <MyGridBody>
+            <EditForm />
            <table id="table-1" border="1" width="100%" className="hoverTable">
-             <tr>
+             <tr key={0} onClick={clickRow.bind(null,0)}>
                {columnModel.map((s,i)=>{
                  return (<TD1 t={data[0][s.name]} column={i}/>)
                })}
@@ -169,7 +211,7 @@ const MyGrid = (s) => {
 
              { data.filter((e,k)=>(k>0)).map((d,i)=>{
                return(
-                 <tr onClick={clickRow.bind(null,i)}>
+                 <tr key={ d.id } onClick={clickRow.bind(null,d.id)}>
 
                      { columnModel.map((s,j)=>{
                       return (<TD2 t={ d[s.name]} /> )
@@ -180,11 +222,13 @@ const MyGrid = (s) => {
              }
          </table>
          </MyGridBody>
-         <MyGridFooter></MyGridFooter>
+         <MyGridFooter>
+          <button onClick={click_me2}>TTT</button>
+         </MyGridFooter>
          </THProvider>
        </MyGridWrapper>
 
-       <button onClick={click_me2}>TTT</button>
+
        </>
      )
   }
