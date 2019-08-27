@@ -16,7 +16,7 @@ const columnModel = [
 ];
 const initData = ()=>{
   var data=[];
-  for(var i=0; i < 35; i++){
+  for(var i=0; i < 100; i++){
     data.push({id: i, col1: "Piter " + i, col2: "Jhon " + i, col3: "Cooper" + i});
   }
   return data;
@@ -74,38 +74,32 @@ const MyGrid = (s) => {
   const GridTable = ( { columnModel, rowData } )=>{
 
 
-    const data = rowData.map((s)=> {
+    let tmp = rowData.map((s)=> {
       return {...s, ...{clicked : false},...{mouseover : false}};
     });
 
+   const data = { values : tmp, currentRef: 0, currentPos : 0 };
 
     const DataTableHook = (d) => {
 
      const [data, setData] = useState( d );
 
-     const toggleClick = (s) => {
+     const toggleClick = (s,p) => {
 
-       let tmp = data.map((v,i)=>{
+       let tmp = data.values.map((v,i)=>{
          return {...v,clicked:false}
        })
-       return tmp.map((u,i)=>{
+       let tmp2 = tmp.map((u,i)=>{
          return  (u.id===s) ? {...u, clicked :!u.clicked} : {...u} ;
        })
 
+       return { values : tmp2, currentRef : s, currentPos : p}
      }
-     const toggleMouse = (s) => {
-        const newObj = { ...data[s], mouseover : !data[s].mouseover }
-        const clearData = data.map((s)=>{
-          return {...s, mouseover: false};
-        })
-        const updatedData = [...clearData.slice(0, s),newObj,...clearData.slice(s+1)  ];
-        return updatedData;
 
-     }
      return {
         data,
-        setClicked : (s)=> setData( toggleClick(s) ),
-        setMouseOver : (s) => setData( toggleMouse(s))
+        setClicked : (s,p)=> setData( toggleClick(s,p) )
+      //  setCurrentRef : (r,p) => setData( (s) => { let zz= {...s,currentRef: r, currentPos : p };  return  zz })
       }
     }
 
@@ -199,7 +193,7 @@ const MyGrid = (s) => {
        {columnModel.map((s,i)=>{
 
          return (
-           <tr><td>{s.caption}</td><td>{data[ params.index ][s.name]}</td>
+           <tr><td>{s.caption}</td><td>{data.values[ params.index ][s.name]}</td>
            </tr>
          )
        })}
@@ -229,9 +223,10 @@ const MyGrid = (s) => {
      }
      const click_me6 = ()=>{
        let id = 1;
-       TableHook.data[id].clicked = true;
-
-       console.log(TableHook.data);
+       let div = document.getElementById("gbody-1");
+       console.log(div.scrollTop);
+       console.log(div.scrollHeight);
+       //div.scrollTo(0,300);
      }
      const TR = ( { i , p })=>{
 
@@ -240,22 +235,48 @@ const MyGrid = (s) => {
        const click_tr=(i,e)=>{
 
          var tr = trElement.current;
+
          var table = trElement.current.parentElement;
 
          var div = trElement.current.parentElement.parentElement;
+
+
          var rect = trElement.current.getBoundingClientRect();
 
-         TableHook.setClicked(i);
+         let d = rect.top - div.scrollTop;
+         console.log(rect.top);
+         console.log( div.scrollTop );
+          console.log( d  );
+
+      //   TableHook.setCurrentRef( i );
+         TableHook.setClicked(i,  div.scrollTop  );
+
+
        }
-         useEffect(() => {
+       useEffect(() => {
 
-            var tr = trElement.current.parentElement.childNodes[4];
+            let u = TableHook.data.currentRef;
+            let pos = TableHook.data.currentPos;
 
-            tr.scrollIntoView( true );
+            var tr = trElement.current.parentElement.childNodes[ u ];
+            var div = trElement.current.parentElement.parentElement;
+
+          //  tr.scrollTo(0,rect.top);
+            div.scrollTo(0,pos);
+
+            const scrollIntoViewOptions = {
+              behavior: "auto"  ,
+              block:    "center"
+
+            }
+
+          //  tr.scrollIntoView(  );
+          //
          });
 
+
        return (
-         <tr className={TableHook.data[i].clicked ? 'bg-clicked' : 'bg-unclicked'} ref={trElement} onClick={click_tr.bind(null,i)}>{p}</tr>
+         <tr className={TableHook.data.values[i].clicked ? 'bg-clicked' : 'bg-unclicked'} ref={trElement} onClick={click_tr.bind(null,i)}>{p}</tr>
        )
      }
      return(
@@ -272,16 +293,16 @@ const MyGrid = (s) => {
              </tr>
            </table>
          </MyGriHeader>
-         <MyGridBody>
+         <MyGridBody id="gbody-1">
             <EditForm />
            <table id="table-1" border="1" width="100%" className="hoverTable">
-             <tr key={0}  className={ data[0].clicked ? 'bg-clicked' : 'bg-unclicked'} >
+             <tr key={0}  className={ TableHook.data.values[0].clicked ? 'bg-clicked' : 'bg-unclicked'} >
                {columnModel.map((s,i)=>{
-                 return (<TD1 t={data[0][s.name]} column={i}/>)
+                 return (<TD1 t={data.values[0][s.name]} column={i}/>)
                })}
              </tr>
 
-             { TableHook.data.filter((e,k)=>(k>0)).map((d,i)=>{
+             { TableHook.data.values.filter((e,k)=>(k>0)).map((d,i)=>{
                return(
                   <TR i={d.id} p = { columnModel.map((s,j)=>{
                       return (<TD2 t={ d[s.name]} /> )
