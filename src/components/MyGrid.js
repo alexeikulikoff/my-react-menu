@@ -1,11 +1,13 @@
 import React, {useState, useRef, useEffect, useContext,useLayoutEffect,useCallback} from 'react';
 import styled , { keyframes } from 'styled-components';
+import ContentBox from './ContentBox';
 import {Icon, Div, IBox, IBoxTitle, IBoxContent, Label,
    H5,IBoxTools, IBoxToolLink,TableWrapper} from './layouts';
 import uuidv4 from 'uuid/v4';
 
 import 'bootstrap/dist/css/bootstrap.css';
 import './MyGrid.css';
+import bgimage from './images/ui-bg_flat_0_aaaaaa_40x100.png';
 
 const columnModel = [
   {name : "id",   className: "col-sm-1", caption : "id"},
@@ -36,43 +38,46 @@ const MyGridBody = styled.div`
     height:  400px;
 
 `;
+
+const UIWidgetOverlay = styled.div`
+
+    background-color: rgb(170, 170, 170);
+    background-position-x: 50%;
+    background-position-y: 50%;
+    background-repeat: repeat-x;
+    background-attachment: scroll;
+    background-image: url(${bgimage});
+    background-size: auto;
+    background-origin: padding-box;
+    background-clip: border-box;
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    z-index: 949;
+    opacity: 0.3;
+    display : ${props=> {  return ( props.params.state ? 'inline-block' :  'none' ) } };
+
+`;
 const MyEditTableDiv = styled.div`
     position: absolute;
-    z-index: 1;
+    z-index: 950;
     top :  ${props=> {  return ( props.params.top  ) } };
     left : ${props=> {  return ( props.params.left  ) } };
     overflow: hidden;
     display : ${props=> {  return ( props.params.state ? 'inline-block' :  'none' ) } };
     padding 10px 10px;
+
 `;
 const MyGridFooter = styled.span`
 
 `
-const SW = (s, f, c)=>{
-
-  return ( s.map((u,i)=>{
-      return  (c===i) ? {...u[i],width:f} : {...u} ;
-   })
-  )
-}
-const click_me2=function(){
-
-   let index = 0;
-   let z = [{ width: ""},{ width: ""}];
-
-   let r = z.map((u,i)=>{
-     return  (index===i) ? {...u[i],width:200} : {...u} ;
-   })
-    console.log(r);
-
-
-};
 
 const MyGrid = (s) => {
 
 
   const GridTable = ( { columnModel, rowData } )=>{
-
 
     let tmp = rowData.map((s)=> {
       return {...s, ...{clicked : false},...{mouseover : false}};
@@ -85,24 +90,19 @@ const MyGrid = (s) => {
      const [data, setData] = useState( d );
 
      const toggleClick = (s,p) => {
-
        let tmp = data.values.map((v,i)=>{
          return {...v,clicked:false}
        })
        let tmp2 = tmp.map((u,i)=>{
          return  (u.id===s) ? {...u, clicked :!u.clicked} : {...u} ;
        })
-
        return { values : tmp2, currentRef : s, currentPos : p}
      }
-
      return {
         data,
         setClicked : (s,p)=> setData( toggleClick(s,p) )
-      //  setCurrentRef : (r,p) => setData( (s) => { let zz= {...s,currentRef: r, currentPos : p };  return  zz })
       }
     }
-
 
     const TableHook  = DataTableHook( data );
 
@@ -114,7 +114,6 @@ const MyGrid = (s) => {
         const [state, setState] =  useState( columnModel.map((s,i)=>{
           return {width:""}
         }));
-
         return (
           <THContext.Provider value={[state, setState]}>
             {props.children}
@@ -128,7 +127,6 @@ const MyGrid = (s) => {
             return s.map((u,i)=>{
               return  (column===i) ? {...u[i],width:f} : {...u} ;
             })
-
          })
        }
         return {
@@ -165,64 +163,66 @@ const MyGrid = (s) => {
 
     const TD2 = ({t}) =>{
       const tdElement = useRef( null );
-      const click_td=(s)=>{
-        let index = parseInt(tdElement.current.parentElement.firstChild.innerText);
-        setParams(( u )=>{return {...u, index: index}});
-        TableHook.setClicked(index);
-
-      //  var table = tdElement.current.parentElement.parentElement;
-      //  for(var i=0; i < table.rows.length; i++){
-          //  table.rows[i].classList.remove('bg-clicked');;
-      //  }
-      //  tdElement.current.parentElement.classList.add('bg-clicked');
-
-      //  console.log(table.parentElement.scrollHeight);
-      //  console.log(table.parentElement.scrollTop);
-      }
-
       return (
           <td ref={tdElement} >{t}</td>
       )
     }
 
+    const INPUT = ({value}) =>{
+      const inpRef = useRef(null);
+      const [inputValue, setInputValue] = useState( value );
 
+      const on_change = (s)=>{
+        console.log(s);
+        setInputValue(inpRef.current.value);
+
+      }
+      return(
+          <input type="text" ref={inpRef} className="formInput" value={inputValue} onChange={(s)=> {on_change(s)}}/>
+      )
+    }
      const EditForm = () =>{
+      
+       const [formData, setFormData] = useState();
 
-       return (<MyEditTableDiv params={params}><table className='editForm'>
+      return (<MyEditTableDiv  params={params}>
 
-       {columnModel.map((s,i)=>{
+      <ContentBox  title={"EDIT RECORD"} content={
+          <table className='editForm'>
+              {columnModel.map((s,i)=>{
+                return (
+                  <tr><td>{s.caption + ':'}</td><td><INPUT key={i} value={data.values[ params.index ][s.name]}/></td>
+                  </tr>
+                )
+              })}
+              <tr><td colspan="2"><button onClick={updateData}>Save</button><button  onClick={closeEditForm}>Close</button></td></tr>
+          </table>}
+       />
 
-         return (
-           <tr><td>{s.caption}</td><td>{data.values[ params.index ][s.name]}</td>
-           </tr>
-         )
-       })}
-         </table>
-         <button onClick={click_me4}>Close</button>
        </MyEditTableDiv>)
      }
-     const click_me2=()=>{
 
+     const updateData = ()=>{
+
+     }
+
+     const openEditForm=()=>{
        var table = document.getElementById("table-1");
        var div = table.parentElement
        var box = div.getBoundingClientRect();
-
        setParams( ()=>{
          return {state : true, top:box.top, left: box.left,index: params.index};
        }) ;
      }
-     const click_me4 =() =>{
+
+     const closeEditForm =() =>{
        setParams( ()=>{
          return {state : false,  top:0, left: 0, index: params.index};
        }) ;
      }
-     const clickRow = (i,s)=>{
 
-        TableHook.setClicked(i);
-
-     }
      const click_me6 = ()=>{
-       let id = 1;
+
        let div = document.getElementById("gbody-1");
        console.log(div.scrollTop);
        console.log(div.scrollHeight);
@@ -233,54 +233,25 @@ const MyGrid = (s) => {
        const trElement = useRef( null );
 
        const click_tr=(i,e)=>{
-
-         var tr = trElement.current;
-
-         var table = trElement.current.parentElement;
-
          var div = trElement.current.parentElement.parentElement;
-
-
-         var rect = trElement.current.getBoundingClientRect();
-
-         let d = rect.top - div.scrollTop;
-         console.log(rect.top);
-         console.log( div.scrollTop );
-          console.log( d  );
-
-      //   TableHook.setCurrentRef( i );
          TableHook.setClicked(i,  div.scrollTop  );
-
+         setParams((s)=>{
+           return {...s, index: i}
+         })
 
        }
        useEffect(() => {
-
-            let u = TableHook.data.currentRef;
             let pos = TableHook.data.currentPos;
-
-            var tr = trElement.current.parentElement.childNodes[ u ];
             var div = trElement.current.parentElement.parentElement;
-
-          //  tr.scrollTo(0,rect.top);
             div.scrollTo(0,pos);
-
-            const scrollIntoViewOptions = {
-              behavior: "auto"  ,
-              block:    "center"
-
-            }
-
-          //  tr.scrollIntoView(  );
-          //
          });
-
-
        return (
          <tr className={TableHook.data.values[i].clicked ? 'bg-clicked' : 'bg-unclicked'} ref={trElement} onClick={click_tr.bind(null,i)}>{p}</tr>
        )
      }
      return(
       <>
+      <UIWidgetOverlay  params={params}/>
        <MyGridWrapper>
 
          <THProvider>
@@ -313,7 +284,7 @@ const MyGrid = (s) => {
          </table>
          </MyGridBody>
          <MyGridFooter>
-          <button onClick={click_me2}>TTT</button>
+          <button onClick={openEditForm}>Open Edit</button>
           <button onClick={click_me6}>TestObjChange</button>
          </MyGridFooter>
          </THProvider>
