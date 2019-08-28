@@ -4,10 +4,11 @@ import ContentBox from './ContentBox';
 import {Icon, Div, IBox, IBoxTitle, IBoxContent, Label,
    H5,IBoxTools, IBoxToolLink,TableWrapper} from './layouts';
 import uuidv4 from 'uuid/v4';
+import { UIWidgetOverlay,MyGridFooter,MyEditFormDiv, MyGridBody, MyGriHeader,MyGridWrapper,MyEditFormTitle, MyEditFormContent, MyEditFormTitleText } from './mygridlayouts';
 
 import 'bootstrap/dist/css/bootstrap.css';
 import './MyGrid.css';
-import bgimage from './images/ui-bg_flat_0_aaaaaa_40x100.png';
+
 
 const columnModel = [
   {name : "id",   className: "col-sm-1", caption : "id"},
@@ -27,56 +28,8 @@ const initData = ()=>{
 let rowData = initData();
 
 
-const MyGridWrapper = styled.div`
-
-`;
-const MyGriHeader = styled.div`
-
-`;
-const MyGridBody = styled.div`
-    overflow-y: scroll;
-    height:  400px;
-
-`;
-
-const UIWidgetOverlay = styled.div`
-
-    background-color: rgb(170, 170, 170);
-    background-position-x: 50%;
-    background-position-y: 50%;
-    background-repeat: repeat-x;
-    background-attachment: scroll;
-    background-image: url(${bgimage});
-    background-size: auto;
-    background-origin: padding-box;
-    background-clip: border-box;
-    height: 100%;
-    width: 100%;
-    position: fixed;
-    left: 0px;
-    top: 0px;
-    z-index: 949;
-    opacity: 0.3;
-    display : ${props=> {  return ( props.params.state ? 'inline-block' :  'none' ) } };
-
-`;
-const MyEditTableDiv = styled.div`
-    position: absolute;
-    z-index: 950;
-    top :  ${props=> {  return ( props.params.top  ) } };
-    left : ${props=> {  return ( props.params.left  ) } };
-    overflow: hidden;
-    display : ${props=> {  return ( props.params.state ? 'inline-block' :  'none' ) } };
-    padding 10px 10px;
-
-
-`;
-const MyGridFooter = styled.span`
-
-`
 
 const MyGrid = (s) => {
-
 
   const GridTable = ( { columnModel, rowData } )=>{
 
@@ -107,7 +60,7 @@ const MyGrid = (s) => {
 
     const TableHook  = DataTableHook( data );
 
-    const [params, setParams] = useState({state : false, top: 0, left: 0, index: 0});
+    const [params, setParams] = useState({state : false, top: 0, left: 0, index: 0, draggable: false });
 
     const THContext = React.createContext([ [{}], () => [{}]]);
 
@@ -169,12 +122,9 @@ const MyGrid = (s) => {
       )
     }
 
-
      const EditForm = () =>{
-
        const [formData, setFormData] = useState( data.values[ params.index ] );
        const [curName, setCurName] = useState("");
-
        const INPUT = ({name,value}) =>{
          const inpRef = useRef(null);
          const [inputValue, setInputValue] = useState( value );
@@ -201,9 +151,26 @@ const MyGrid = (s) => {
            console.log( formData );
       }
 
-      return (<MyEditTableDiv  params={params}>
+      const onMouseDown = (e)=>{
+        setParams( (s)=>({...s, draggable: true }) ) ;
 
-      <ContentBox  title={"EDIT RECORD"} content={
+      }
+      const onMouseUp = (e)=>{
+         setParams( (s)=>({...s, draggable: false }) ) ;
+      }
+      const onMouseMove = (e)=>{
+        e.stopPropagation()
+        e.preventDefault()
+        if (params.draggable){
+
+        //  setParams((s)=>({...s,top: e.pageX, left: e.pageY}));
+          console.log(e.pageX);
+        }
+      }
+      return (
+      <MyEditFormDiv  params={params} style={{top: params.top, left: params.left}}>
+      <MyEditFormTitle onMouseDown={onMouseDown} onMouseUp={onMouseUp} onMouseMove={onMouseMove}><MyEditFormTitleText>Edit record</MyEditFormTitleText></MyEditFormTitle>
+      <MyEditFormContent>
           <table className='editForm'>
               {columnModel.map((s,i)=>{
                 return (
@@ -212,24 +179,25 @@ const MyGrid = (s) => {
                 )
               })}
               <tr><td colspan="2"><button onClick={updateData}>Save</button><button  onClick={closeEditForm}>Close</button></td></tr>
-          </table>}
-       />
-
-       </MyEditTableDiv>)
+          </table>
+       </MyEditFormContent>
+       </MyEditFormDiv>
+       )
      }
 
      const openEditForm=()=>{
        var table = document.getElementById("table-1");
        var div = table.parentElement
        var box = div.getBoundingClientRect();
+
        setParams( ()=>{
-         return {state : true, top:box.top, left: box.left,index: params.index};
+         return {state : true, top:'20%', left:'20%',index: params.index , draggable: false };
        }) ;
      }
 
      const closeEditForm =() =>{
        setParams( ()=>{
-         return {state : false,  top:0, left: 0, index: params.index};
+         return {state : false,  top:0, left: 0, index: params.index, draggable: false };
        }) ;
      }
 
@@ -263,9 +231,9 @@ const MyGrid = (s) => {
      }
      return(
       <>
+      <EditForm />
       <UIWidgetOverlay  params={params}/>
        <MyGridWrapper>
-
          <THProvider>
          <MyGriHeader>
            <table border="1">
@@ -277,7 +245,7 @@ const MyGrid = (s) => {
            </table>
          </MyGriHeader>
          <MyGridBody id="gbody-1">
-            <EditForm />
+
            <table id="table-1" border="1" width="100%" className="hoverTable">
              <tr key={0}  className={ TableHook.data.values[0].clicked ? 'bg-clicked' : 'bg-unclicked'} >
                {columnModel.map((s,i)=>{
