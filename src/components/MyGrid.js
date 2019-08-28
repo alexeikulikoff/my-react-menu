@@ -54,7 +54,13 @@ const MyGrid = (s) => {
      }
      return {
         data,
-        setClicked : (s,p)=> setData( toggleClick(s,p) )
+        setClicked : (s,p)=> setData( toggleClick(s,p) ),
+        updateData : (v, index) => setData((s)=>{
+          let tmp =  s.values.map((u,i)=>{
+            return (u.id === index)? {...{...v,clicked : true}} : {...u}
+          })
+          return { values : tmp, currentRef: s.currentRef, currentPos : s.currentPos  }
+        })
       }
     }
 
@@ -123,7 +129,7 @@ const MyGrid = (s) => {
     }
 
      const EditForm = () =>{
-       const [formData, setFormData] = useState( data.values[ params.index ] );
+       const [formData, setFormData] = useState( TableHook.data.values[ params.index ] );
        const [curName, setCurName] = useState("");
        const INPUT = ({name,value}) =>{
          const inpRef = useRef(null);
@@ -148,7 +154,8 @@ const MyGrid = (s) => {
        }
 
       const updateData = ()=>{
-           console.log( formData );
+          TableHook.updateData(formData, params.index);
+          setParams((s)=>({...s,state:false}));
       }
 
       const onMouseDown = (e)=>{
@@ -247,16 +254,12 @@ const MyGrid = (s) => {
          <MyGridBody id="gbody-1">
 
            <table id="table-1" border="1" width="100%" className="hoverTable">
-             <tr key={0}  className={ TableHook.data.values[0].clicked ? 'bg-clicked' : 'bg-unclicked'} >
-               {columnModel.map((s,i)=>{
-                 return (<TD1 t={data.values[0][s.name]} column={i}/>)
-               })}
-             </tr>
 
-             { TableHook.data.values.filter((e,k)=>(k>0)).map((d,i)=>{
+
+             { TableHook.data.values.map((d,i)=>{
                return(
                   <TR i={d.id} p = { columnModel.map((s,j)=>{
-                      return (<TD2 t={ d[s.name]} /> )
+                      return (<TD1 t={ d[s.name]} column={j}/> )
                     })} />
                 )
               })
@@ -269,8 +272,6 @@ const MyGrid = (s) => {
          </MyGridFooter>
          </THProvider>
        </MyGridWrapper>
-
-
        </>
      )
   }

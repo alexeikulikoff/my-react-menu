@@ -20,6 +20,31 @@ const h = () => {
   return  Math.max( body.scrollHeight, body.offsetHeight,
                          html.clientHeight, html.scrollHeight, html.offsetHeight );
 }
+
+const handleData = (s)=>{
+  console.log('handle');
+  let colName="col1";
+  let data=[];
+  for(var i=0; i < 10; i++){
+    data.push({id: i, col1: (10 - i) + "Piter ", col2: "Jhon " + i, col3: "Cooper" + i});
+  }
+
+  console.log(data);
+
+  let mp = new Map();
+  let unsort = [];
+  data.forEach((s,i)=>{
+      mp.set(s[colName], s);
+      unsort.push(s[colName]);
+  })
+  let sort = unsort.sort((a,b)=> { return a - b});
+  let res = [];
+  sort.forEach((s)=>{
+    res.push(mp.get(s));
+  })
+  console.log(res);
+
+}
 const  App = () => {
 
 const [state, setState] = useState( false );
@@ -50,7 +75,9 @@ let title2 = "Mainboxes";
     <MenuWrapper ><MenuItem prop= {{content, state}}/></MenuWrapper>
     </MyDiv1>
     <MyDiv2 id="d2" state={state}  style={{marginLeft : "220px"}}>
-    <PageHeader className="row"> <LinkBtn onClick={(s)=>  setState(!state)} state={state}/></PageHeader>
+    <PageHeader className="row"> <LinkBtn onClick={(s)=>  setState(!state)} state={state}/>
+    <button  onClick={handleData}>Data</button>
+    </PageHeader>
 
   <WrapperContent>
   <Div className="row">
