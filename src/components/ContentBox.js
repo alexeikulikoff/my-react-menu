@@ -16,7 +16,6 @@ const ContentBox = (s)=>{
 
   const click_me = (s)=>{
     setParams( ()=>{
-        console.log(params.id);
         let h = document.getElementById( params.id ).offsetHeight + 'px' ;
         return {"state": !params.state, "height": params.state ? h:  params.height , "id" : params.id }
     });

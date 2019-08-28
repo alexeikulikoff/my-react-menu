@@ -69,6 +69,7 @@ const MyEditTableDiv = styled.div`
     display : ${props=> {  return ( props.params.state ? 'inline-block' :  'none' ) } };
     padding 10px 10px;
 
+
 `;
 const MyGridFooter = styled.span`
 
@@ -168,22 +169,37 @@ const MyGrid = (s) => {
       )
     }
 
-    const INPUT = ({value}) =>{
-      const inpRef = useRef(null);
-      const [inputValue, setInputValue] = useState( value );
 
-      const on_change = (s)=>{
-        console.log(s);
-        setInputValue(inpRef.current.value);
-
-      }
-      return(
-          <input type="text" ref={inpRef} className="formInput" value={inputValue} onChange={(s)=> {on_change(s)}}/>
-      )
-    }
      const EditForm = () =>{
-      
-       const [formData, setFormData] = useState();
+
+       const [formData, setFormData] = useState( data.values[ params.index ] );
+       const [curName, setCurName] = useState("");
+
+       const INPUT = ({name,value}) =>{
+         const inpRef = useRef(null);
+         const [inputValue, setInputValue] = useState( value );
+         const on_change = (s)=>{
+           setCurName( name );
+           let nv = inpRef.current.value;
+           let prop = inpRef.current.name;
+           setInputValue(nv);
+           setFormData((v)=> ({...v,   [prop] : nv }));
+
+         }
+         useEffect(()=>{
+            if (inpRef.current.name===curName) {
+              inpRef.current.focus();
+             }
+         },[]);
+
+         return(
+             <input type="text" name={name} ref={ inpRef } className="formInput" value={inputValue} onChange={(s)=> {on_change(s)}}/>
+         )
+       }
+
+      const updateData = ()=>{
+           console.log( formData );
+      }
 
       return (<MyEditTableDiv  params={params}>
 
@@ -191,7 +207,7 @@ const MyGrid = (s) => {
           <table className='editForm'>
               {columnModel.map((s,i)=>{
                 return (
-                  <tr><td>{s.caption + ':'}</td><td><INPUT key={i} value={data.values[ params.index ][s.name]}/></td>
+                  <tr><td>{s.caption + ':'}</td><td><INPUT  key={i} name={s.name} value={formData[s.name]}/></td>
                   </tr>
                 )
               })}
@@ -200,10 +216,6 @@ const MyGrid = (s) => {
        />
 
        </MyEditTableDiv>)
-     }
-
-     const updateData = ()=>{
-
      }
 
      const openEditForm=()=>{
