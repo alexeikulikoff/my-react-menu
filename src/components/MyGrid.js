@@ -31,6 +31,7 @@ let rowData = initData();
 
 const MyGrid = (s) => {
 
+
   const GridTable = ( { columnModel, rowData } )=>{
 
     let tmp = rowData.map((s)=> {
@@ -115,6 +116,7 @@ const MyGrid = (s) => {
       useLayoutEffect(() => {
           let h = tdElement.current.offsetWidth;
           setWidth(h);
+          console.log(s.menuState);
         },[  state[column].width, winstate ]);
       return (
         <td ref={tdElement} onClick={click_td}>{t}</td>
@@ -254,7 +256,6 @@ const MyGrid = (s) => {
          <MyGridBody id="gbody-1">
 
            <table id="table-1" border="1" width="100%" className="hoverTable">
-
 
              { TableHook.data.values.map((d,i)=>{
                return(

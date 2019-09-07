@@ -85,7 +85,7 @@ let title2 = "Mainboxes";
       <ContentBox  title={title1} content={cnt} />
     </Div>
     <Div className="col-lg-8">
-     <MyGrid  title="MyGrid"  />
+     <MyGrid  title="MyGrid" menuState={state} />
     </Div>
   </Div>
 <Div className="row">
